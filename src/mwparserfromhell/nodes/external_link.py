@@ -38,10 +38,13 @@ class ExternalLink(Node):
     def __str__(self):
         if self.brackets:
             if self.title is not None:
-                if self.suppress_space is True:
-                    return "[" + str(self.url) + str(self.title) + "]"
-                return "[" + str(self.url) + " " + str(self.title) + "]"
-            return "[" + str(self.url) + "]"
+                return (
+                    f"[{str(self.url)}{str(self.title)}]"
+                    if self.suppress_space is True
+                    else f"[{str(self.url)} {str(self.title)}]"
+                )
+            else:
+                return f"[{str(self.url)}]"
         return str(self.url)
 
     def __children__(self):
@@ -51,9 +54,7 @@ class ExternalLink(Node):
 
     def __strip__(self, **kwargs):
         if self.brackets:
-            if self.title:
-                return self.title.strip_code(**kwargs)
-            return None
+            return self.title.strip_code(**kwargs) if self.title else None
         return self.url.strip_code(**kwargs)
 
     def __showtree__(self, write, get, mark):

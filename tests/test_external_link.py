@@ -118,7 +118,7 @@ def test_brackets():
     assert node2.brackets is True
     node1.brackets = True
     node2.brackets = False
-    assert node1.brackets is True
-    assert node2.brackets is False
+    assert node1.brackets
+    assert not node2.brackets
     assert "[http://example.com/]" == str(node1)
     assert "http://example.com/" == str(node2)

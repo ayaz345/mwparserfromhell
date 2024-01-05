@@ -43,7 +43,7 @@ class Parameter(StringMixIn):
 
     def __str__(self):
         if self.showkey:
-            return str(self.name) + "=" + str(self.value)
+            return f"{str(self.name)}={str(self.value)}"
         return str(self.value)
 
     @staticmethod

@@ -32,7 +32,7 @@ class Comment(Node):
         self.contents = contents
 
     def __str__(self):
-        return "<!--" + self.contents + "-->"
+        return f"<!--{self.contents}-->"
 
     @property
     def contents(self):

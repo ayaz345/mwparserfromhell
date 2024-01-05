@@ -54,7 +54,7 @@ class Attribute(StringMixIn):
     def __str__(self):
         result = self.pad_first + str(self.name) + self.pad_before_eq
         if self.value is not None:
-            result += "=" + self.pad_after_eq
+            result += f"={self.pad_after_eq}"
             if self.quotes:
                 return result + self.quotes + str(self.value) + self.quotes
             return result + str(self.value)
@@ -70,9 +70,7 @@ class Attribute(StringMixIn):
             return None
         if "'" in val and '"' not in val:
             return '"'
-        if '"' in val and "'" not in val:
-            return "'"
-        return "\"'"  # Either acceptable, " preferred over '
+        return "'" if '"' in val and "'" not in val else "\"'"
 
     def _set_padding(self, attr, value):
         """Setter for the value of a padding attribute."""

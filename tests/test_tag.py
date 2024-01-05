@@ -196,7 +196,7 @@ def test_self_closing():
     node = Tag(wraptext("ref"), wraptext("foobar"))
     assert node.self_closing is False
     node.self_closing = True
-    assert node.self_closing is True
+    assert node.self_closing
     assert "<ref/>" == node
     node.self_closing = 0
     assert node.self_closing is False
@@ -208,7 +208,7 @@ def test_invalid():
     node = Tag(wraptext("br"), self_closing=True, implicit=True)
     assert node.invalid is False
     node.invalid = True
-    assert node.invalid is True
+    assert node.invalid
     assert "</br>" == node
     node.invalid = 0
     assert node.invalid is False
@@ -220,7 +220,7 @@ def test_implicit():
     node = Tag(wraptext("br"), self_closing=True)
     assert node.implicit is False
     node.implicit = True
-    assert node.implicit is True
+    assert node.implicit
     assert "<br>" == node
     node.implicit = 0
     assert node.implicit is False

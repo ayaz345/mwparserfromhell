@@ -40,15 +40,21 @@ fallback = True
 # Allow env var WITHOUT_EXTENSION and args --with[out]-extension:
 
 env_var = os.environ.get("WITHOUT_EXTENSION")
-if "--without-extension" in sys.argv:
+if (
+    "--without-extension" not in sys.argv
+    and "--with-extension" not in sys.argv
+    and env_var is not None
+    and env_var == "1"
+    or "--without-extension" in sys.argv
+):
     use_extension = False
-elif "--with-extension" in sys.argv:
+elif (
+    "--with-extension" not in sys.argv
+    and env_var is not None
+    and env_var == "0"
+    or "--with-extension" in sys.argv
+):
     fallback = False
-elif env_var is not None:
-    if env_var == "1":
-        use_extension = False
-    elif env_var == "0":
-        fallback = False
 
 # Remove the command line argument as it isn't understood by setuptools:
 
@@ -61,7 +67,7 @@ def build_ext_patched(self):
     try:
         build_ext_original(self)
     except Exception as exc:
-        print("error: " + str(exc))
+        print(f"error: {str(exc)}")
         print("Falling back to pure Python mode.")
         del self.extensions[:]
 
@@ -93,9 +99,7 @@ setup(
     url="https://github.com/earwig/mwparserfromhell",
     description="MWParserFromHell is a parser for MediaWiki wikicode.",
     long_description=long_docs,
-    download_url="https://github.com/earwig/mwparserfromhell/tarball/v{}".format(
-        __version__
-    ),
+    download_url=f"https://github.com/earwig/mwparserfromhell/tarball/v{__version__}",
     keywords="earwig mwparserfromhell wikipedia wiki mediawiki wikicode template parsing",
     license="MIT License",
     classifiers=[

@@ -70,8 +70,7 @@ class Wikicode(StringMixIn):
             return
         for code in node.__children__():
             for child in code.nodes:
-                sub = Wikicode._get_children(child, contexts, restrict, code)
-                yield from sub
+                yield from Wikicode._get_children(child, contexts, restrict, code)
 
     @staticmethod
     def _slice_replace(code, index, old, new):
@@ -123,9 +122,7 @@ class Wikicode(StringMixIn):
         """Return whether the given :class:`.Wikicode` is a descendant."""
 
         def deref(nodes):
-            if isinstance(nodes, ListProxy):
-                return nodes._parent  # pylint: disable=protected-access
-            return nodes
+            return nodes._parent if isinstance(nodes, ListProxy) else nodes
 
         target = deref(obj.nodes)
         if target is deref(self.nodes):
@@ -271,8 +268,8 @@ class Wikicode(StringMixIn):
             filt = make_filter(ftype)
             ifilt.__doc__ = doc.format(name, "ifilter", ftype)
             filt.__doc__ = doc.format(name, "filter", ftype)
-            setattr(cls, "ifilter_" + name, ifilt)
-            setattr(cls, "filter_" + name, filt)
+            setattr(cls, f"ifilter_{name}", ifilt)
+            setattr(cls, f"filter_{name}", filt)
 
     @property
     def nodes(self):
@@ -604,7 +601,7 @@ class Wikicode(StringMixIn):
         open_headings = []
 
         # Add the lead section if appropriate:
-        if include_lead or not (include_lead is not None or matches or levels):
+        if include_lead or include_lead is None and not matches and not levels:
             itr = self._indexed_ifilter(recursive=False, forcetype=Heading)
             try:
                 first = next(itr)[0]
@@ -631,10 +628,11 @@ class Wikicode(StringMixIn):
             open_headings.append((start, heading))
 
         # Add any remaining open headings to the list of sections:
-        for start, heading in open_headings:
-            if matcher(heading):
-                sections.append((start, Wikicode(self.nodes[start:])))
-
+        sections.extend(
+            (start, Wikicode(self.nodes[start:]))
+            for start, heading in open_headings
+            if matcher(heading)
+        )
         # Ensure that earlier sections are earlier in the returned list:
         return [section for i, section in sorted(sections)]
 
@@ -663,8 +661,7 @@ class Wikicode(StringMixIn):
 
         nodes = []
         for node in self.nodes:
-            stripped = node.__strip__(**kwargs)
-            if stripped:
+            if stripped := node.__strip__(**kwargs):
                 nodes.append(str(stripped))
 
         if collapse:

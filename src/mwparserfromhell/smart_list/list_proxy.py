@@ -168,9 +168,7 @@ class ListProxy(_SliceNormalizerMixIn, list):
     @property
     def _stop(self):
         """The ending index of this list, exclusive."""
-        if self._sliceinfo[1] is None:
-            return len(self._parent)
-        return self._sliceinfo[1]
+        return len(self._parent) if self._sliceinfo[1] is None else self._sliceinfo[1]
 
     @property
     def _step(self):

@@ -66,7 +66,7 @@ def test_showkey():
     assert node1.showkey is False
     assert node2.showkey is True
     node1.showkey = True
-    assert node1.showkey is True
+    assert node1.showkey
     node1.showkey = ""
     assert node1.showkey is False
     with pytest.raises(ValueError):

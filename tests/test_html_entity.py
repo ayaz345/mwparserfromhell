@@ -148,9 +148,9 @@ def test_hexadecimal():
     node1.hexadecimal = False
     node2.hexadecimal = True
     node3.hexadecimal = False
-    assert node1.hexadecimal is False
-    assert node2.hexadecimal is True
-    assert node3.hexadecimal is False
+    assert not node1.hexadecimal
+    assert node2.hexadecimal
+    assert not node3.hexadecimal
     with pytest.raises(ValueError):
         node1.__setattr__("hexadecimal", True)
 

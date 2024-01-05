@@ -36,7 +36,7 @@ class Argument(Node):
     def __str__(self):
         start = "{{{" + str(self.name)
         if self.default is not None:
-            return start + "|" + str(self.default) + "}}}"
+            return f"{start}|{str(self.default)}" + "}}}"
         return start + "}}}"
 
     def __children__(self):
@@ -45,9 +45,7 @@ class Argument(Node):
             yield self.default
 
     def __strip__(self, **kwargs):
-        if self.default is not None:
-            return self.default.strip_code(**kwargs)
-        return None
+        return self.default.strip_code(**kwargs) if self.default is not None else None
 
     def __showtree__(self, write, get, mark):
         write("{{{")
@@ -80,7 +78,4 @@ class Argument(Node):
 
     @default.setter
     def default(self, default):
-        if default is None:
-            self._default = None
-        else:
-            self._default = parse_anything(default)
+        self._default = None if default is None else parse_anything(default)

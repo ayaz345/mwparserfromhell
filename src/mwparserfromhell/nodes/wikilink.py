@@ -35,8 +35,8 @@ class Wikilink(Node):
 
     def __str__(self):
         if self.text is not None:
-            return "[[" + str(self.title) + "|" + str(self.text) + "]]"
-        return "[[" + str(self.title) + "]]"
+            return f"[[{str(self.title)}|{str(self.text)}]]"
+        return f"[[{str(self.title)}]]"
 
     def __children__(self):
         yield self.title
@@ -73,7 +73,4 @@ class Wikilink(Node):
 
     @text.setter
     def text(self, value):
-        if value is None:
-            self._text = None
-        else:
-            self._text = parse_anything(value)
+        self._text = None if value is None else parse_anything(value)

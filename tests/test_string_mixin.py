@@ -149,19 +149,15 @@ def test_other_magics():
     str2 = _FakeString("")
     expected = ["f", "a", "k", "e", " ", "s", "t", "r", "i", "n", "g"]
 
-    assert bool(str1) is True
-    assert bool(str2) is False
+    assert bool(str1)
+    assert not bool(str2)
     assert 11 == len(str1)
     assert 0 == len(str2)
 
-    out = []
-    for ch in str1:
-        out.append(ch)
+    out = list(str1)
     assert expected == out
 
-    out = []
-    for ch in str2:
-        out.append(ch)
+    out = list(str2)
     assert [] == out
 
     gen1 = iter(str1)
@@ -169,9 +165,7 @@ def test_other_magics():
     assert isinstance(gen1, GeneratorType)
     assert isinstance(gen2, GeneratorType)
 
-    out = []
-    for _ in range(len(str1)):
-        out.append(next(gen1))
+    out = [next(gen1) for _ in range(len(str1))]
     with pytest.raises(StopIteration):
         next(gen1)
     assert expected == out

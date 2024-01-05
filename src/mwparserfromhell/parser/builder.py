@@ -140,9 +140,7 @@ class Builder:
                 name = self._pop()
                 self._push()
             elif isinstance(token, tokens.ArgumentClose):
-                if name is not None:
-                    return Argument(name, self._pop())
-                return Argument(self._pop())
+                return Argument(self._pop()) if name is None else Argument(name, self._pop())
             else:
                 self._write(self._handle_token(token))
         raise ParserError("_handle_argument() missed a close token")
@@ -158,9 +156,7 @@ class Builder:
                 title = self._pop()
                 self._push()
             elif isinstance(token, tokens.WikilinkClose):
-                if title is not None:
-                    return Wikilink(title, self._pop())
-                return Wikilink(self._pop())
+                return Wikilink(self._pop()) if title is None else Wikilink(title, self._pop())
             else:
                 self._write(self._handle_token(token))
         raise ParserError("_handle_wikilink() missed a close token")

@@ -421,8 +421,8 @@ def test_filter_family():
             func(forcetype=True)
 
     funcs = [
-        lambda name, **kw: getattr(code, "filter_" + name)(**kw),
-        lambda name, **kw: genlist(getattr(code, "ifilter_" + name)(**kw)),
+        lambda name, **kw: getattr(code, f"filter_{name}")(**kw),
+        lambda name, **kw: genlist(getattr(code, f"ifilter_{name}")(**kw)),
     ]
     for get_filter in funcs:
         assert ["{{{e}}}"] == get_filter("arguments")

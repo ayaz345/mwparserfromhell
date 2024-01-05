@@ -31,5 +31,5 @@ class ParserError(Exception):
     """
 
     def __init__(self, extra):
-        msg = "This is a bug and should be reported. Info: {}.".format(extra)
+        msg = f"This is a bug and should be reported. Info: {extra}."
         super().__init__(msg)

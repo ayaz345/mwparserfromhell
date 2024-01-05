@@ -36,10 +36,10 @@ class Token(dict):
         args = []
         for key, value in self.items():
             if isinstance(value, str) and len(value) > 100:
-                args.append(key + "=" + repr(value[:97] + "..."))
+                args.append(f'{key}={repr(f"{value[:97]}...")}')
             else:
-                args.append(key + "=" + repr(value))
-        return "{}({})".format(type(self).__name__, ", ".join(args))
+                args.append(f"{key}={repr(value)}")
+        return f'{type(self).__name__}({", ".join(args)})'
 
     def __eq__(self, other):
         return isinstance(other, type(self)) and dict.__eq__(self, other)

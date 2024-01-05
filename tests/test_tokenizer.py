@@ -87,7 +87,7 @@ def _load_tests(filename, name, text):
             continue
 
         # Include test filename in name
-        data["name"] = "{}:{}".format(name, data["name"])
+        data["name"] = f'{name}:{data["name"]}'
 
         yield data
 

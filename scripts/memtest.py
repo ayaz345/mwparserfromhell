@@ -58,9 +58,8 @@ class MemoryTest:
 
     def _parse_file(self, name, text):
         tests = text.split("\n---\n")
-        counter = 1
         digits = len(str(len(tests)))
-        for test in tests:
+        for counter, test in enumerate(tests, start=1):
             data = {"name": None, "label": None, "input": None, "output": None}
             for line in test.strip().splitlines():
                 if line.startswith("name:"):
@@ -74,9 +73,8 @@ class MemoryTest:
                     raw = raw.encode("raw_unicode_escape")
                     data["input"] = raw.decode("unicode_escape")
             number = str(counter).zfill(digits)
-            fname = "test_{}{}_{}".format(name, number, data["name"])
+            fname = f'test_{name}{number}_{data["name"]}'
             self._tests.append((fname, data["input"]))
-            counter += 1
 
     def _load(self):
         def load_file(filename):
@@ -109,7 +107,7 @@ class MemoryTest:
             tmpl = "{0}LEAKING{1}: {2:n} bytes, {3:.2%} inc ({4:n} bytes/loop)"
             sys.stdout.write(tmpl.format(Color.YELLOW, Color.RESET, d, p, bpt))
         else:
-            sys.stdout.write("{}OK{}".format(Color.GREEN, Color.RESET))
+            sys.stdout.write(f"{Color.GREEN}OK{Color.RESET}")
 
     def run(self):
         """Run the memory test suite."""

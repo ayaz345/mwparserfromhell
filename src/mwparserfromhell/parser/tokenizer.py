@@ -532,7 +532,7 @@ class Tokenizer:
                     if this is not self.END and " " in this:
                         before, after = this.split(" ", 1)
                         punct, tail = self._handle_free_link_text(punct, tail, before)
-                        tail += " " + after
+                        tail += f" {after}"
                     else:
                         self._head -= 1
                     return self._pop(), tail
@@ -651,7 +651,7 @@ class Tokenizer:
         valid = "0123456789abcdefABCDEF" if hexadecimal else "0123456789"
         if not numeric and not hexadecimal:
             valid += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        if not all([char in valid for char in this]):
+        if any(char not in valid for char in this):
             self._fail_route()
 
         self._head += 1
@@ -661,9 +661,8 @@ class Tokenizer:
             test = int(this, 16) if hexadecimal else int(this)
             if test < 1 or test > 0x10FFFF:
                 self._fail_route()
-        else:
-            if this not in htmlentities.entitydefs:
-                self._fail_route()
+        elif this not in htmlentities.entitydefs:
+            self._fail_route()
 
         self._emit(tokens.Text(text=this))
         self._emit(tokens.HTMLEntityEnd())
@@ -1307,15 +1306,23 @@ class Tokenizer:
         if context & contexts.FAIL_NEXT:
             return False
         if context & contexts.WIKILINK_TITLE:
-            if this in ("]", "{"):
+            if (
+                this not in ("]", "{")
+                and this not in ("\n", "[", "}", ">")
+                and this == "<"
+                and self._read(1) == "!"
+                or this in ("]", "{")
+            ):
                 self._context |= contexts.FAIL_NEXT
-            elif this in ("\n", "[", "}", ">"):
+            elif (
+                this not in ("]", "{")
+                and this not in ("\n", "[", "}", ">")
+                and this == "<"
+                and self._read(1) != "!"
+                or this not in ("]", "{")
+                and this in ("\n", "[", "}", ">")
+            ):
                 return False
-            elif this == "<":
-                if self._read(1) == "!":
-                    self._context |= contexts.FAIL_NEXT
-                else:
-                    return False
             return True
         if context & contexts.EXT_LINK_TITLE:
             return this != "\n"

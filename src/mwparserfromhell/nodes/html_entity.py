@@ -51,15 +51,13 @@ class HTMLEntity(Node):
 
     def __str__(self):
         if self.named:
-            return "&{};".format(self.value)
+            return f"&{self.value};"
         if self.hexadecimal:
-            return "&#{}{};".format(self.hex_char, self.value)
-        return "&#{};".format(self.value)
+            return f"&#{self.hex_char}{self.value};"
+        return f"&#{self.value};"
 
     def __strip__(self, **kwargs):
-        if kwargs.get("normalize"):
-            return self.normalize()
-        return self
+        return self.normalize() if kwargs.get("normalize") else self
 
     @property
     def value(self):
@@ -116,9 +114,7 @@ class HTMLEntity(Node):
         else:
             test = int(newval, 16 if self.hexadecimal else 10)
             if test < 0 or test > 0x10FFFF:
-                raise ValueError(
-                    "entity value {} is not in range(0x110000)".format(test)
-                )
+                raise ValueError(f"entity value {test} is not in range(0x110000)")
             self._named = False
         self._value = newval
 
@@ -147,14 +143,13 @@ class HTMLEntity(Node):
     @hex_char.setter
     def hex_char(self, newval):
         newval = str(newval)
-        if newval not in ("x", "X"):
+        if newval in {"x", "X"}:
+            self._hex_char = newval
+        else:
             raise ValueError(newval)
-        self._hex_char = newval
 
     def normalize(self):
         """Return the unicode character represented by the HTML entity."""
         if self.named:
             return chr(htmlentities.name2codepoint[self.value])
-        if self.hexadecimal:
-            return chr(int(self.value, 16))
-        return chr(int(self.value))
+        return chr(int(self.value, 16)) if self.hexadecimal else chr(int(self.value))

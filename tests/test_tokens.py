@@ -31,7 +31,7 @@ from mwparserfromhell.parser import tokens
 def test_issubclass(name):
     """check that all classes within the tokens module are really Tokens"""
     klass = getattr(tokens, name)
-    assert issubclass(klass, tokens.Token) is True
+    assert issubclass(klass, tokens.Token)
     assert isinstance(klass(), klass)
     assert isinstance(klass(), tokens.Token)
 
@@ -65,8 +65,11 @@ def test_repr():
     hundredchars = ("earwig" * 100)[:97] + "..."
 
     assert "Token()" == repr(token1)
-    assert repr(token2) in ("Token(foo='bar', baz=123)", "Token(baz=123, foo='bar')")
-    assert "Text(text='" + hundredchars + "')" == repr(token3)
+    assert repr(token2) in {
+        "Token(foo='bar', baz=123)",
+        "Token(baz=123, foo='bar')",
+    }
+    assert f"Text(text='{hundredchars}')" == repr(token3)
 
 
 def test_equality():

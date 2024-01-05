@@ -86,8 +86,8 @@ class Tag(Node):
         if self.self_closing:
             result += self.padding + (">" if self.implicit else "/>")
         else:
-            result += self.padding + ">" + str(self.contents)
-            result += "</" + str(self.closing_tag) + ">"
+            result += f"{self.padding}>{str(self.contents)}"
+            result += f"</{str(self.closing_tag)}>"
         return result
 
     def __children__(self):
@@ -269,10 +269,7 @@ class Tag(Node):
         Note that a tag may have multiple attributes with the same name, but
         only the last one is read by the MediaWiki parser.
         """
-        for attr in self.attributes:
-            if attr.name == name.strip():
-                return True
-        return False
+        return any(attr.name == name.strip() for attr in self.attributes)
 
     def get(self, name):
         """Get the attribute with the given *name*.

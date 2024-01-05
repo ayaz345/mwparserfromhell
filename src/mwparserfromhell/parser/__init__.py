@@ -82,5 +82,4 @@ class Parser:
         be raised.
         """
         tokens = self._tokenizer.tokenize(text, context, skip_style_tags)
-        code = self._builder.build(tokens)
-        return code
+        return self._builder.build(tokens)

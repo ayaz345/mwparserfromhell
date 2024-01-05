@@ -52,8 +52,8 @@ def _test_get_set_del_item(builder):
     assert [] == list1[6:]
     assert [] == list1[4:2]
 
-    assert [0, 2, "one"] == list1[0:5:2]
-    assert [0, 2] == list1[0:-3:2]
+    assert [0, 2, "one"] == list1[:5:2]
+    assert [0, 2] == list1[:-3:2]
     assert [0, 1, 2, 3, "one", "two"] == list1[::]
     assert [2, 3, "one", "two"] == list1[2::]
     assert [0, 1, 2, 3] == list1[:4:]
@@ -73,16 +73,16 @@ def _test_get_set_del_item(builder):
     assert [0, 1, 2, 101, "one", 6, 7, 8] == list1
     list1[2:4] = [-1, -2, -3, -4, -5]
     assert [0, 1, -1, -2, -3, -4, -5, "one", 6, 7, 8] == list1
-    list1[0:-3] = [99]
+    list1[:-3] = [99]
     assert [99, 6, 7, 8] == list1
-    list2[0:6:2] = [100, 102, 104]
+    list2[:6:2] = [100, 102, 104]
     assert [100, 1, 102, 3, 104, 5, 6, 7, 8, 9] == list2
     list2[::3] = [200, 203, 206, 209]
     assert [200, 1, 102, 203, 104, 5, 206, 7, 8, 209] == list2
     list2[::] = range(7)
     assert [0, 1, 2, 3, 4, 5, 6] == list2
     with pytest.raises(ValueError):
-        list2[0:5:2] = [100, 102, 104, 106]
+        list2[:5:2] = [100, 102, 104, 106]
     with pytest.raises(IndexError):
         list2[7] = "foo"
     with pytest.raises(IndexError):
@@ -115,7 +115,6 @@ def _test_add_radd_iadd(builder):
     assert [0, 1, 2, 3, 4, 5, 6] == list1 + [5, 6]
     assert [0, 1, 2, 3, 4] == list1
     assert list(range(10)) == list1 + list2
-    assert [-2, -1, 0, 1, 2, 3, 4], [-2, -1] + list1
     assert [0, 1, 2, 3, 4] == list1
     list1 += ["foo", "bar", "baz"]
     assert [0, 1, 2, 3, 4, "foo", "bar", "baz"] == list1
@@ -163,26 +162,20 @@ def _test_other_magic_methods(builder):
     assert list1 <= other3
     assert list1 >= other3
 
-    assert bool(list1) is True
-    assert bool(list2) is False
+    assert bool(list1)
+    assert not bool(list2)
 
     assert 6 == len(list1)
     assert 0 == len(list2)
 
-    out = []
-    for obj in list1:
-        out.append(obj)
+    out = list(list1)
     assert [0, 1, 2, 3, "one", "two"] == out
 
-    out = []
-    for ch in list2:
-        out.append(ch)
+    out = list(list2)
     assert [] == out
 
     gen1 = iter(list1)
-    out = []
-    for _ in range(len(list1)):
-        out.append(next(gen1))
+    out = [next(gen1) for _ in range(len(list1))]
     with pytest.raises(StopIteration):
         next(gen1)
     assert [0, 1, 2, 3, "one", "two"] == out

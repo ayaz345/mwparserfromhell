@@ -40,10 +40,7 @@ class Template(Node):
     def __init__(self, name, params=None):
         super().__init__()
         self.name = name
-        if params:
-            self._params = params
-        else:
-            self._params = []
+        self._params = params if params else []
 
     def __str__(self):
         if self.params:
@@ -133,10 +130,7 @@ class Template(Node):
         for param in self.params:
             if not param.showkey:
                 continue
-            if use_names:
-                component = str(param.name)
-            else:
-                component = str(param.value)
+            component = str(param.name) if use_names else str(param.value)
             match = re.search(r"^(\s*).*?(\s*)$", component, FLAGS)
             before, after = match.group(1), match.group(2)
             if not use_names and component.isspace() and "\n" in before:
@@ -274,8 +268,8 @@ class Template(Node):
                 existing.showkey = showkey
             if not existing.showkey:
                 self._surface_escape(value, "=")
-            nodes = existing.value.nodes
             if preserve_spacing and existing.showkey:
+                nodes = existing.value.nodes
                 for i in range(2):  # Ignore empty text nodes
                     if not nodes[i]:
                         nodes[i] = None
@@ -292,10 +286,7 @@ class Template(Node):
                     if not param.showkey:
                         int_keys.add(int(str(param.name)))
                 expected = min(set(range(1, len(int_keys) + 2)) - int_keys)
-                if expected == int_name:
-                    showkey = False
-                else:
-                    showkey = True
+                showkey = expected != int_name
             else:
                 showkey = True
         if not showkey:
